@@ -2072,3 +2072,10 @@ void SSL_set_tmp_dh_callback(SSL *ssl,DH *(*dh)(SSL *ssl,int is_export,
 
 IMPLEMENT_STACK_OF(SSL_CIPHER)
 IMPLEMENT_STACK_OF(SSL_COMP)
+
+void OpenSSLDie(const char *file,int line,const char *assertion)
+    {
+    fprintf(stderr,"%s(%d): OpenSSL internal error, assertion failed: %s\n",
+           file,line,assertion);
+    abort();
+    }
