@@ -258,6 +258,7 @@ static ERR_STRING_DATA SSL_str_reasons[]=
 {SSL_R_DATA_BETWEEN_CCS_AND_FINISHED     ,"data between ccs and finished"},
 {SSL_R_DATA_LENGTH_TOO_LONG              ,"data length too long"},
 {SSL_R_DECRYPTION_FAILED                 ,"decryption failed"},
+{SSL_R_DECRYPTION_FAILED_OR_BAD_RECORD_MAC,"decryption failed or bad record mac"},
 {SSL_R_DH_PUBLIC_VALUE_LENGTH_IS_WRONG   ,"dh public value length is wrong"},
 {SSL_R_DIGEST_CHECK_FAILED               ,"digest check failed"},
 {SSL_R_ENCRYPTED_LENGTH_TOO_LONG         ,"encrypted length too long"},
