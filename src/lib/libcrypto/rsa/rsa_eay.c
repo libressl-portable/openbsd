@@ -186,6 +186,26 @@ err:
 	return(r);
 	}
 
+static int rsa_eay_blinding(RSA *rsa, BN_CTX *ctx)
+	{
+	int ret = 1;
+	CRYPTO_w_lock(CRYPTO_LOCK_RSA);
+	/* Check again inside the lock - the macro's check is racey */
+	if(rsa->blinding == NULL)
+		ret = RSA_blinding_on(rsa, ctx);
+	CRYPTO_w_unlock(CRYPTO_LOCK_RSA);
+	return ret;
+	}
+
+#define BLINDING_HELPER(rsa, ctx, err_instr) \
+	do { \
+		if(((rsa)->flags & RSA_FLAG_BLINDING) && \
+				((rsa)->blinding == NULL) && \
+				!rsa_eay_blinding(rsa, ctx)) \
+			err_instr \
+	} while(0)
+
+/* signing */
 static int RSA_eay_private_encrypt(int flen, unsigned char *from,
 	     unsigned char *to, RSA *rsa, int padding)
 	{
@@ -224,8 +244,8 @@ static int RSA_eay_private_encrypt(int flen, unsigned char *from,
 
 	if (BN_bin2bn(buf,num,&f) == NULL) goto err;
 
-	if ((rsa->flags & RSA_FLAG_BLINDING) && (rsa->blinding == NULL))
-		RSA_blinding_on(rsa,ctx);
+	BLINDING_HELPER(rsa, ctx, goto err;);
+
 	if (rsa->flags & RSA_FLAG_BLINDING)
 		if (!BN_BLINDING_convert(&f,rsa->blinding,ctx)) goto err;
 
@@ -299,8 +319,8 @@ static int RSA_eay_private_decrypt(int flen, unsigned char *from,
 	/* make data into a big number */
 	if (BN_bin2bn(from,(int)flen,&f) == NULL) goto err;
 
-	if ((rsa->flags & RSA_FLAG_BLINDING) && (rsa->blinding == NULL))
-		RSA_blinding_on(rsa,ctx);
+	BLINDING_HELPER(rsa, ctx, goto err;);
+
 	if (rsa->flags & RSA_FLAG_BLINDING)
 		if (!BN_BLINDING_convert(&f,rsa->blinding,ctx)) goto err;
 
