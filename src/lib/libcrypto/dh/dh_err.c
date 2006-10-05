@@ -79,6 +79,7 @@ static ERR_STRING_DATA DH_str_reasons[]=
 	{
 {DH_R_BAD_GENERATOR                      ,"bad generator"},
 {DH_R_NO_PRIVATE_VALUE                   ,"no private value"},
+{DH_R_MODULUS_TOO_LARGE                  ,"modulus too large"},
 {0,NULL}
 	};
 
