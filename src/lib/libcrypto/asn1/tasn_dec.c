@@ -474,7 +474,6 @@ static int asn1_template_ex_d2i(ASN1_VALUE **val, unsigned char **in, long inlen
 
 	err:
 	ASN1_template_free(val, tt);
-	*val = NULL;
 	return 0;
 }
 
@@ -574,7 +573,6 @@ static int asn1_template_noexp_d2i(ASN1_VALUE **val, unsigned char **in, long le
 
 	err:
 	ASN1_template_free(val, tt);
-	*val = NULL;
 	return 0;
 }
 
@@ -768,6 +766,18 @@ int asn1_ex_c2i(ASN1_VALUE **pval, unsigned char *cont, int len, int utype, char
 		case V_ASN1_SET:
 		case V_ASN1_SEQUENCE:
 		default:
+		if (utype == V_ASN1_BMPSTRING && (len & 1))
+			{
+			ASN1err(ASN1_F_ASN1_D2I_EX_PRIMITIVE,
+					ASN1_R_BMPSTRING_IS_WRONG_LENGTH);
+			goto err;
+			}
+		if (utype == V_ASN1_UNIVERSALSTRING && (len & 3))
+			{
+			ASN1err(ASN1_F_ASN1_D2I_EX_PRIMITIVE,
+					ASN1_R_UNIVERSALSTRING_IS_WRONG_LENGTH);
+			goto err;
+			}
 		/* All based on ASN1_STRING and handled the same */
 		if(!*pval) {
 			stmp = ASN1_STRING_type_new(utype);
