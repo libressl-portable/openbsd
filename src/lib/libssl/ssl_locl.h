@@ -165,6 +165,12 @@
 #include <openssl/ssl.h>
 #include <openssl/symhacks.h>
 
+/*
+ * Macro defined here rather than in ssl.h for -stable, avoiding
+ * the need to update installed headers before building.
+ */
+#define SSL3_FLAGS_CCS_OK	0x0080
+
 #ifdef OPENSSL_BUILD_SHLIBSSL
 # undef OPENSSL_EXTERN
 # define OPENSSL_EXTERN OPENSSL_EXPORT
