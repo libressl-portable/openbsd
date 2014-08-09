@@ -511,6 +511,7 @@ int ssl3_connect(SSL *s)
 				s->method->ssl3_enc->client_finished_label,
 				s->method->ssl3_enc->client_finished_label_len);
 			if (ret <= 0) goto end;
+			s->s3->flags |= SSL3_FLAGS_CCS_OK;
 			s->state=SSL3_ST_CW_FLUSH;
 
 			/* clear flags */
@@ -902,6 +903,7 @@ int ssl3_get_server_hello(SSL *s)
 			{
 			s->session->cipher = pref_cipher ?
 				pref_cipher : ssl_get_cipher_by_char(s, p+j);
+	    		s->s3->flags |= SSL3_FLAGS_CCS_OK;
 			}
 		}
 #endif /* OPENSSL_NO_TLSEXT */
@@ -953,6 +955,15 @@ int ssl3_get_server_hello(SSL *s)
 		SSLerr(SSL_F_SSL3_GET_SERVER_HELLO,SSL_R_WRONG_CIPHER_RETURNED);
 		goto f_err;
 		}
+#ifndef OPENSSL_NO_SRP
+	if (((c->algorithm_mkey & SSL_kSRP) || (c->algorithm_auth & SSL_aSRP)) &&
+		    !(s->srp_ctx.srp_Mask & SSL_kSRP))
+		{
+		al=SSL_AD_ILLEGAL_PARAMETER;
+		SSLerr(SSL_F_SSL3_GET_SERVER_HELLO,SSL_R_WRONG_CIPHER_RETURNED);
+		goto f_err;
+		}
+#endif /* OPENSSL_NO_SRP */
 	p+=ssl_put_cipher_by_char(s,NULL,NULL);
 
 	sk=ssl_get_ciphers_by_id(s);
@@ -1455,6 +1466,12 @@ int ssl3_get_key_exchange(SSL *s)
 			}
 		p+=i;
 		n-=param_len;
+
+		if (!srp_verify_server_param(s, &al))
+			{
+			SSLerr(SSL_F_SSL3_GET_KEY_EXCHANGE,SSL_R_WRONG_CIPHER_RETURNED);
+			goto f_err;
+			}
 
 /* We must check if there is a certificate */
 #ifndef OPENSSL_NO_RSA
@@ -2248,6 +2265,13 @@ int ssl3_send_client_key_exchange(SSL *s)
 			{
 			RSA *rsa;
 			unsigned char tmp_buf[SSL_MAX_MASTER_KEY_LENGTH];
+
+			if (s->session->sess_cert == NULL)
+				{
+				/* We should always have a server certificate with SSL_kRSA. */
+				SSLerr(SSL_F_SSL3_SEND_CLIENT_KEY_EXCHANGE,ERR_R_INTERNAL_ERROR);
+				goto err;
+				}
 
 			if (s->session->sess_cert->peer_rsa_tmp != NULL)
 				rsa=s->session->sess_cert->peer_rsa_tmp;
