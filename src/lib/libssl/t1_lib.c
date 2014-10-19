@@ -2188,8 +2188,10 @@ static int tls_decrypt_ticket(SSL *s, const unsigned char *etick, int eticklen,
 	HMAC_Update(&hctx, etick, eticklen);
 	HMAC_Final(&hctx, tick_hmac, NULL);
 	HMAC_CTX_cleanup(&hctx);
-	if (timingsafe_bcmp(tick_hmac, etick + eticklen, mlen))
+	if (timingsafe_bcmp(tick_hmac, etick + eticklen, mlen)) {
+		EVP_CIPHER_CTX_cleanup(&ctx);
 		return 2;
+	}
 	/* Attempt to decrypt session data */
 	/* Move p after IV to start of encrypted ticket, update length */
 	p = etick + 16 + EVP_CIPHER_CTX_iv_length(&ctx);
