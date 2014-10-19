@@ -213,6 +213,7 @@ static int ssl_ctx_make_profiles(const char *profiles_string,STACK_OF(SRTP_PROTE
 		else
 			{
 			SSLerr(SSL_F_SSL_CTX_MAKE_PROFILES,SSL_R_SRTP_UNKNOWN_PROTECTION_PROFILE);
+			sk_SRTP_PROTECTION_PROFILE_free(profiles);
 			return 1;
 			}
 
