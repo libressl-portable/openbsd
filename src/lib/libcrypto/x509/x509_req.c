@@ -1,4 +1,4 @@
-/* $OpenBSD: x509_req.c,v 1.15 2014/07/11 08:44:49 jsing Exp $ */
+/* $OpenBSD: x509_req.c,v 1.15.4.1 2015/03/19 14:02:22 tedu Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -95,7 +95,9 @@ X509_to_X509_REQ(X509 *x, EVP_PKEY *pkey, const EVP_MD *md)
 	if (!X509_REQ_set_subject_name(ret, X509_get_subject_name(x)))
 		goto err;
 
-	pktmp = X509_get_pubkey(x);
+	if ((pktmp = X509_get_pubkey(x)) == NULL)
+		goto err;
+
 	i = X509_REQ_set_pubkey(ret, pktmp);
 	EVP_PKEY_free(pktmp);
 	if (!i)
