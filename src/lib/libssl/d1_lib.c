@@ -1,4 +1,4 @@
-/* $OpenBSD: d1_lib.c,v 1.24 2014/07/17 23:48:24 deraadt Exp $ */
+/* $OpenBSD: d1_lib.c,v 1.24.4.1 2015/03/19 14:02:23 tedu Exp $ */
 /* 
  * DTLS implementation written by Nagendra Modadugu
  * (nagendra@cs.stanford.edu) for the OpenSSL project 2005.  
@@ -448,6 +448,9 @@ int
 dtls1_listen(SSL *s, struct sockaddr *client)
 {
 	int ret;
+
+	/* Ensure there is no state left over from a previous invocation */
+	SSL_clear(s);
 
 	SSL_set_options(s, SSL_OP_COOKIE_EXCHANGE);
 	s->d1->listen = 1;
