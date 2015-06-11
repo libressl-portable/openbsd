@@ -1,4 +1,4 @@
-/* $OpenBSD: bn_gf2m.c,v 1.15 2014/07/11 08:44:47 jsing Exp $ */
+/* $OpenBSD: bn_gf2m.c,v 1.15.4.1 2015/06/11 16:11:00 jsing Exp $ */
 /* ====================================================================
  * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
  *
@@ -746,8 +746,13 @@ BN_GF2m_mod_inv(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
 				ubits--;
 			}
 
-			if (ubits <= BN_BITS2 && udp[0] == 1)
-				break;
+			if (ubits <= BN_BITS2) {
+				/* See if poly was reducible. */
+				if (udp[0] == 0)
+					goto err;
+				if (udp[0] == 1)
+					break;
+			}
 
 			if (ubits < vbits) {
 				i = ubits;
