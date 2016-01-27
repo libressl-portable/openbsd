@@ -1,4 +1,4 @@
-/* $OpenBSD: s3_lib.c,v 1.99 2015/07/19 06:23:51 doug Exp $ */
+/* $OpenBSD: s3_lib.c,v 1.99.4.1 2016/01/27 02:09:51 beck Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -2172,14 +2172,6 @@ ssl3_ctrl(SSL *s, int cmd, long larg, void *parg)
 				    ERR_R_DH_LIB);
 				return (ret);
 			}
-			if (!(s->options & SSL_OP_SINGLE_DH_USE)) {
-				if (!DH_generate_key(dh)) {
-					DH_free(dh);
-					SSLerr(SSL_F_SSL3_CTRL,
-					    ERR_R_DH_LIB);
-					return (ret);
-				}
-			}
 			DH_free(s->cert->dh_tmp);
 			s->cert->dh_tmp = dh;
 			ret = 1;
@@ -2362,14 +2354,6 @@ ssl3_ctx_ctrl(SSL_CTX *ctx, int cmd, long larg, void *parg)
 				SSLerr(SSL_F_SSL3_CTX_CTRL,
 				    ERR_R_DH_LIB);
 				return 0;
-			}
-			if (!(ctx->options & SSL_OP_SINGLE_DH_USE)) {
-				if (!DH_generate_key(new)) {
-					SSLerr(SSL_F_SSL3_CTX_CTRL,
-					    ERR_R_DH_LIB);
-					DH_free(new);
-					return 0;
-				}
 			}
 			DH_free(cert->dh_tmp);
 			cert->dh_tmp = new;
