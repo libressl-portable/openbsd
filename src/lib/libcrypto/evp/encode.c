@@ -1,4 +1,4 @@
-/* $OpenBSD: encode.c,v 1.20.6.1 2016/05/03 12:39:23 tedu Exp $ */
+/* $OpenBSD: encode.c,v 1.20.6.2 2016/05/03 13:57:22 bcook Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -56,7 +56,7 @@
  * [including the GNU Public Licence.]
  */
 
-#include <sys/limits.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 
