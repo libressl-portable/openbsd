@@ -1,4 +1,4 @@
-/* $OpenBSD: s3_pkt.c,v 1.57.2.1 2016/05/03 12:39:48 tedu Exp $ */
+/* $OpenBSD: s3_pkt.c,v 1.57.2.2 2016/05/04 01:10:57 tedu Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -956,7 +956,6 @@ start:
 
 		memcpy(buf, &(rr->data[rr->off]), n);
 		if (!peek) {
-			memset(&(rr->data[rr->off]), 0, n);
 			rr->length -= n;
 			rr->off += n;
 			if (rr->length == 0) {
