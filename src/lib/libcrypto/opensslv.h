@@ -1,10 +1,10 @@
-/* $OpenBSD: opensslv.h,v 1.33.2.3 2016/05/29 20:53:29 bcook Exp $ */
+/* $OpenBSD: opensslv.h,v 1.33.2.4 2016/06/06 09:51:46 bcook Exp $ */
 #ifndef HEADER_OPENSSLV_H
 #define HEADER_OPENSSLV_H
 
 /* These will change with each release of LibreSSL-portable */
-#define LIBRESSL_VERSION_NUMBER	0x2030500fL
-#define LIBRESSL_VERSION_TEXT	"LibreSSL 2.3.5"
+#define LIBRESSL_VERSION_NUMBER	0x2030600fL
+#define LIBRESSL_VERSION_TEXT	"LibreSSL 2.3.6"
 
 /* These will never change */
 #define OPENSSL_VERSION_NUMBER	0x20000000L
