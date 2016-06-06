@@ -1,4 +1,4 @@
-/* $OpenBSD: dsa_ossl.c,v 1.22 2014/10/18 17:20:40 jsing Exp $ */
+/* $OpenBSD: dsa_ossl.c,v 1.22.6.1 2016/06/06 10:00:50 beck Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -247,9 +247,6 @@ dsa_sign_setup(DSA *dsa, BN_CTX *ctx_in, BIGNUM **kinvp, BIGNUM **rp)
 		if (!BN_rand_range(&k, dsa->q))
 			goto err;
 	} while (BN_is_zero(&k));
-	if ((dsa->flags & DSA_FLAG_NO_EXP_CONSTTIME) == 0) {
-		BN_set_flags(&k, BN_FLG_CONSTTIME);
-	}
 
 	if (dsa->flags & DSA_FLAG_CACHE_MONT_P) {
 		if (!BN_MONT_CTX_set_locked(&dsa->method_mont_p,
@@ -283,6 +280,11 @@ dsa_sign_setup(DSA *dsa, BN_CTX *ctx_in, BIGNUM **kinvp, BIGNUM **rp)
 	} else {
 		K = &k;
 	}
+
+	if ((dsa->flags & DSA_FLAG_NO_EXP_CONSTTIME) == 0) {
+		BN_set_flags(&k, BN_FLG_CONSTTIME);
+	}
+
 	DSA_BN_MOD_EXP(goto err, dsa, r, dsa->g, K, dsa->p, ctx,
 	    dsa->method_mont_p);
 	if (!BN_mod(r,r,dsa->q,ctx))
