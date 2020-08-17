@@ -1,4 +1,4 @@
-/*	$OpenBSD: tls13_legacy.c,v 1.3.4.2 2020/08/10 18:59:47 tb Exp $ */
+/*	$OpenBSD: tls13_legacy.c,v 1.3.4.3 2020/08/17 11:04:20 tb Exp $ */
 /*
  * Copyright (c) 2018, 2019 Joel Sing <jsing@openbsd.org>
  *
@@ -497,6 +497,7 @@ tls13_legacy_shutdown(SSL *ssl)
 		if ((ret = tls13_record_layer_send_pending(ctx->rl)) !=
 		    TLS13_IO_SUCCESS)
 			return tls13_legacy_return_code(ssl, ret);
+		ctx->close_notify_sent = 1;
 	} else if (!ctx->close_notify_recv) {
 		/*
 		 * If there is no application data pending, attempt to read more
