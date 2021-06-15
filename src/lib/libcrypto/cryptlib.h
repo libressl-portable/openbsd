@@ -66,7 +66,11 @@ extern "C" {
 #endif
 
 #define X509_CERT_AREA		OPENSSLDIR
+#ifdef __ANDROID__
+#define X509_CERT_DIR		"/etc/security/cacerts"
+#else
 #define X509_CERT_DIR		OPENSSLDIR "/certs"
+#endif
 #define X509_CERT_FILE		OPENSSLDIR "/cert.pem"
 #define X509_PRIVATE_DIR	OPENSSLDIR "/private"
 #define X509_CERT_DIR_EVP        "SSL_CERT_DIR"
